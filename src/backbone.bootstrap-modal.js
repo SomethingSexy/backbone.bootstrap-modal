@@ -22,6 +22,8 @@
   }
 
   var template = _.template('\
+    <div class="modal-dialog">\
+    <div class="modal-content">\
     <% if (title) { %>\
       <div class="modal-header">\
         <% if (allowCancel) { %>\
@@ -34,10 +36,12 @@
     <div class="modal-footer">\
       <% if (allowCancel) { %>\
         <% if (cancelText) { %>\
-          <a href="#" class="btn cancel">{{cancelText}}</a>\
+          <button class="btn btn-default cancel" data-dismiss="modal" aria-hidden="true">{{cancelText}}</button>\
         <% } %>\
       <% } %>\
-      <a href="#" class="btn ok btn-primary">{{okText}}</a>\
+	  <button class="btn ok btn-primary save" data-loading-text="Saving..." autocomplete="off">{{okText}}</button>\
+    </div>\
+    </div>\
     </div>\
   ');
 
@@ -175,7 +179,7 @@
       }, this.options.modalOptions));
 
       //Focus OK button
-      $el.one('shown', function() {
+      $el.one('shown.bs.modal', function() {
         if (self.options.focusOk) {
           $el.find('.btn.ok').focus();
         }
@@ -241,7 +245,7 @@
         return;
       }
 
-      $el.one('hidden', function onHidden(e) {
+      $el.one('hidden.bs.modal', function onHidden(e) {
         // Ignore events propagated from interior objects, like bootstrap tooltips
         if(e.target !== e.currentTarget){
           return $el.one('hidden', onHidden);
