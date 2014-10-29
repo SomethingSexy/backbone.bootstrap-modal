@@ -12,7 +12,27 @@
  * cancel: The user dismissed the modal
  * ok: The user clicked OK
  */
-(function($, _, Backbone) {
+(function(root, factory) {
+
+  // Set up Backbone appropriately for the environment. Start with AMD.
+  if (typeof define === 'function' && define.amd) {
+    define(['backbone', 'underscore','exports'], function(Backbone, _, exports) {
+      // Export global even in AMD case in case this script is loaded with
+      // others that may still expect a global Backbone.
+      root.Backbone.BootstrapModal = factory(root, Backbone, _, $);
+    });
+
+  // Next for Node.js or CommonJS. jQuery may not be needed as a module.
+  } else if (typeof exports !== 'undefined') {
+    var _ = require('underscore', 'backbone');
+    factory(root, Backbone , _);
+
+  // Finally, as a browser global.
+  } else {
+    root.Backbone.BootstrapModal = factory(root, root.Backbone, root._);
+  }
+
+}(this, function(root, Backbone, _) {
 
   //Set custom template settings
   var _interpolateBackup = _.templateSettings;
@@ -278,23 +298,4 @@
     count: 0
   });
 
-
-  //EXPORTS
-  //CommonJS
-  if (typeof require == 'function' && typeof module !== 'undefined' && exports) {
-    module.exports = Modal;
-  }
-
-  //AMD / RequireJS
-  if (typeof define === 'function' && define.amd) {
-    return define(function() {
-      Backbone.BootstrapModal = Modal;
-    })
-  }
-
-  //Regular; add to Backbone.Bootstrap.Modal
-  else {
-    Backbone.BootstrapModal = Modal;
-  }
-
-})(jQuery, _, Backbone);
+});
